@@ -1,22 +1,19 @@
 package de.gedoplan.showcase;
 
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ClassicThreads {
+public class VirtualThreads {
 
-  private static ExecutorService threadPool = Executors.newCachedThreadPool();
   private static AtomicInteger threadCount = new AtomicInteger();
   private static Phaser barrier = new Phaser(2);
 
   public static void main(String[] args) {
     while (true) {
-      // Start doSomething in new (platform) thread
-      threadPool.execute(ClassicThreads::doSomething);
+      // Start doSomething in new virtual thread
+      Thread.startVirtualThread(VirtualThreads::doSomething);
 
       // Wait for new thread to be alive before continuing with the next one
       barrier.arriveAndAwaitAdvance();
@@ -27,7 +24,7 @@ public class ClassicThreads {
 
     // Increment and print thread count
     int count = threadCount.incrementAndGet();
-    if ((count % 100) == 0) {
+    if ((count % 10000) == 0) {
       System.out.printf(Locale.GERMANY, "Thread %,d%n", count);
     }
 
